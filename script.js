@@ -1,5 +1,67 @@
 //your JS code here.
+document.addEventListener("DOMContentLoaded", function () {
 
+    const questions = [
+        { q: "1. Which HTML tag is used to link JavaScript?", options: ["<script>", "<js>", "<link>", "<javascript>"], answer: 0 },
+        { q: "2. Which is used to style web pages?", options: ["HTML", "CSS", "Python", "C++"], answer: 1 },
+        { q: "3. What does DOM stand for?", options: ["Document Object Model", "Data Object Management", "Digital Ordinance Model", "None"], answer: 0 },
+        { q: "4. Which symbol is used for comments in JS?", options: ["//", "<!-- -->", "#", "**"], answer: 0 },
+        { q: "5. Which method prints output in console?", options: ["document.write()", "console.log()", "print()", "echo()"], answer: 1 }
+    ];
+
+    const questionContainer = document.getElementById("questions");
+    const submitBtn = document.getElementById("submit");
+    const scoreDiv = document.getElementById("score");
+
+    let savedProgress = JSON.parse(sessionStorage.getItem("progress")) || {};
+
+    // ----------------- DISPLAY QUESTIONS -----------------
+    questions.forEach((item, index) => {
+        let div = document.createElement("div");
+        div.innerHTML = `<p>${item.q}</p>`;
+
+        item.options.forEach((opt, i) => {
+            let radio = document.createElement("input");
+            radio.type = "radio";
+            radio.name = "q" + index;
+            radio.value = i;
+
+            // Restore progress if existed
+            if (savedProgress[index] == i) radio.checked = true;
+
+            // Save progress when radio is clicked
+            radio.addEventListener("change", function () {
+                savedProgress[index] = i;
+                sessionStorage.setItem("progress", JSON.stringify(savedProgress));
+            });
+
+            div.appendChild(radio);
+            div.innerHTML += opt + "<br>";
+        });
+
+        questionContainer.appendChild(div);
+    });
+
+    // ----------------- SUBMIT QUIZ -----------------
+    submitBtn.addEventListener("click", function () {
+        let score = 0;
+
+        questions.forEach((q, i) => {
+            if (savedProgress[i] == q.answer) score++;
+        });
+
+        scoreDiv.textContent = `Your score is ${score} out of 5.`;
+
+        localStorage.setItem("score", score);
+    });
+
+    // ----------------- SHOW SCORE IF SAVED -----------------
+    let lastScore = localStorage.getItem("score");
+    if (lastScore !== null) {
+        scoreDiv.textContent = `Your score is ${lastScore} out of 5.`;
+    }
+
+});
 // Do not change code below this line
 // This code will just display the questions to the screen
 const questions = [
